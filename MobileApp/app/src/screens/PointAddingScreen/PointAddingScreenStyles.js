@@ -251,10 +251,10 @@ export const styles = StyleSheet.create({
   locationFocusBtn: {
     position: "absolute",
     backgroundColor: "rgba(0,0,0, 0.7)",
-    padding: 10,
+    padding: responsiveHeight(1.5),
     borderRadius: 5,
     top: Platform.OS === "android" ? "20%" : "20%",
-    right: 10,
+    right: responsiveWidth(3),
   },
   clearIconContainer: {
     position: "absolute",

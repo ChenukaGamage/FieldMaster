@@ -143,8 +143,8 @@ export default function Home() {
       mapRef.current.animateToRegion({
         latitude: currentLocation.coords.latitude,
         longitude: currentLocation.coords.longitude,
-        latitudeDelta: 0.05,
-        longitudeDelta: 0.05,
+        latitudeDelta: 0.0005,
+        longitudeDelta: 0.0005,
       });
     }
   };

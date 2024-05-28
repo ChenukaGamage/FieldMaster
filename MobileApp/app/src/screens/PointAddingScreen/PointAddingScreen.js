@@ -11,6 +11,11 @@ import {
   faLayerGroup,
   faLocationCrosshairs,
 } from "@fortawesome/free-solid-svg-icons";
+import {
+  responsiveHeight,
+  responsiveWidth,
+  responsiveFontSize,
+} from "react-native-responsive-dimensions";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { styles } from "./PointAddingScreenStyles";
 import MapView, { MAP_TYPES } from "react-native-maps";
@@ -395,7 +400,7 @@ const PointAddingScreen = ({ navigation, route }) => {
           >
             <FontAwesomeIcon
               icon={faLocationCrosshairs}
-              size={25}
+              size={responsiveFontSize(2.7)}
               color="#fff"
             />
           </TouchableOpacity>
