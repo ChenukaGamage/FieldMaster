@@ -32,16 +32,16 @@ import axios from "axios";
 import Config from "react-native-config";
 import ProfileAvatar from "../components/ProfileAvatar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useIsFocused } from '@react-navigation/native';
+import { useIsFocused } from "@react-navigation/native";
 import AxiosInstance from "../AxiosInstance";
 
-const apiKey ='AIzaSyB61t78UY4piRjSDjihdHxlF2oqtrtzw8U'
+const apiKey = "AIzaSyB61t78UY4piRjSDjihdHxlF2oqtrtzw8U";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const navigation = useNavigation();
   const [isfocused, setIsFocused] = useState(false);
-  const [mapTypeIndex, setMapTypeIndex] = useState(0);
+  const [mapTypeIndex, setMapTypeIndex] = useState(2);
   const [currentLocation, setCurrentLocation] = useState(null);
   const [showCurrentLocation, setShowCurrentLocation] = useState(false);
   const [searchedLocation, setSearchedLocation] = useState(null);
@@ -52,7 +52,6 @@ export default function Home() {
   const [userData, setUserData] = useState(null);
 
   const isFocused = useIsFocused();
-  
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -62,15 +61,14 @@ export default function Home() {
           setUserData(response.data.user);
         }
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        console.error("Error fetching user data:", error);
       }
     };
-  
+
     if (isFocused) {
       fetchUserData();
     }
   }, [isFocused]);
-  
 
   //get the current location
   useEffect(() => {
@@ -196,148 +194,147 @@ export default function Home() {
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
-     
-        <View style={styles.container}>
-          <MapView
-            ref={mapRef}
-            style={styles.map}
-            provider={PROVIDER_GOOGLE}
-            mapType={mapTypes[mapTypeIndex].value}
-            initialRegion={{
-              latitude: 6.2427,
-              longitude: 80.0607,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421,
-            }}
-          >
-            {showCurrentLocation && currentLocation && (
-              <Marker
-                coordinate={{
-                  latitude: currentLocation.coords.latitude,
-                  longitude: currentLocation.coords.longitude,
-                }}
-                title="Current Location"
-              />
-            )}
-            {searchedLocation && (
-              <Marker coordinate={searchedLocation} title="Searched Location" />
-            )}
-          </MapView>
-
-          <View style={styles.searchbar}>
-            <View style={styles.locationIconContainer}>
-              <MaterialIcons
-                name="location-on"
-                size={responsiveFontSize(2.9)}
-                color="#007BFF"
-              />
-            </View>
-            <TextInput
-              placeholder="Search Location"
-              placeholderTextColor="rgba(0, 0, 0, 0.5)"
-              onFocus={onFocus}
-              onBlur={onBlur}
-              style={[
-                styles.searchbarInput,
-                isfocused ? styles.searchbarInputFocused : null,
-              ]}
-              onChangeText={setSearchQuery}
-              value={searchQuery}
-              onSubmitEditing={searchLocation}
+      <View style={styles.container}>
+        <MapView
+          ref={mapRef}
+          style={styles.map}
+          provider={PROVIDER_GOOGLE}
+          mapType={mapTypes[mapTypeIndex].value}
+          initialRegion={{
+            latitude: 6.2427,
+            longitude: 80.0607,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        >
+          {showCurrentLocation && currentLocation && (
+            <Marker
+              coordinate={{
+                latitude: currentLocation.coords.latitude,
+                longitude: currentLocation.coords.longitude,
+              }}
+              title="Current Location"
             />
-            {searchQuery !== "" && (
-              <TouchableOpacity
-                onPress={clearSearchQuery}
-                style={styles.clearIconContainer}
-              >
-                <MaterialIcons
-                  name="cancel"
-                  size={responsiveFontSize(2.9)}
-                  color="#707070"
-                />
-              </TouchableOpacity>
-            )}
-            <View style={{ marginLeft: responsiveWidth(3) }}>
-            <TouchableOpacity onPress={ProfileManage}>
-              <ProfileAvatar userData={userData}  textSize={5} />
-              </TouchableOpacity>
-              </View>
+          )}
+          {searchedLocation && (
+            <Marker coordinate={searchedLocation} title="Searched Location" />
+          )}
+        </MapView>
+
+        <View style={styles.searchbar}>
+          <View style={styles.locationIconContainer}>
+            <MaterialIcons
+              name="location-on"
+              size={responsiveFontSize(2.9)}
+              color="#007BFF"
+            />
           </View>
-
-          <TouchableOpacity
-            style={styles.layerIconContainer}
-            onPress={toggleMapType}
-          >
-            <FontAwesomeIcon
-              icon={faLayerGroup}
-              size={responsiveFontSize(2.7)}
-              color="#fff"
-            />
-            {showDropdown && (
-              <View style={styles.dropdownContainer}>
-                <FlatList
-                  data={mapTypes}
-                  renderItem={({ item, index }) => (
-                    <TouchableOpacity
-                      style={styles.dropdownItem}
-                      onPress={() => selectMapType(index)}
-                    >
-                      <Text style={{ color: "#fff" }}>{item.name}</Text>
-                    </TouchableOpacity>
-                  )}
-                  keyExtractor={(item) => item.value}
-                />
-              </View>
-            )}
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.button2}
-            onPress={focusOnCurrentLocation}
-          >
-            <FontAwesomeIcon
-              icon={faLocationCrosshairs}
-              size={responsiveFontSize(2.7)}
-              color="#fff"
-            />
-          </TouchableOpacity>
-
-          <SelectionModal
-            modalVisible={modalVisible}
-            setModalVisible={setModalVisible}
-            options={options}
+          <TextInput
+            placeholder="Search Location"
+            placeholderTextColor="rgba(0, 0, 0, 0.5)"
+            onFocus={onFocus}
+            onBlur={onBlur}
+            style={[
+              styles.searchbarInput,
+              isfocused ? styles.searchbarInputFocused : null,
+            ]}
+            onChangeText={setSearchQuery}
+            value={searchQuery}
+            onSubmitEditing={searchLocation}
           />
-
-          <ProfileModel
-            profileModalVisible={profileModalVisible}
-            setProfileModalVisible={setProfileModalVisible}
-          />
-
-          <View style={styles.buttonContainer}>
-            <View style={styles.buttonWrapper}>
-              <Button
-                buttonColor="#007BFF"
-                icon="walk"
-                mode="contained"
-                onPress={startMeasure}
-                style={styles.button}
-              >
-                Start Measure
-              </Button>
-            </View>
-            <View style={styles.buttonWrapper}>
-              <Button
-                buttonColor="#007BFF"
-                icon="content-save-all"
-                mode="contained"
-                onPress={handleTemplatePress}
-                style={styles.button}
-              >
-                Templates
-              </Button>
-            </View>
+          {searchQuery !== "" && (
+            <TouchableOpacity
+              onPress={clearSearchQuery}
+              style={styles.clearIconContainer}
+            >
+              <MaterialIcons
+                name="cancel"
+                size={responsiveFontSize(2.9)}
+                color="#707070"
+              />
+            </TouchableOpacity>
+          )}
+          <View style={{ marginLeft: responsiveWidth(3) }}>
+            <TouchableOpacity onPress={ProfileManage}>
+              <ProfileAvatar userData={userData} textSize={5} />
+            </TouchableOpacity>
           </View>
         </View>
+
+        <TouchableOpacity
+          style={styles.layerIconContainer}
+          onPress={toggleMapType}
+        >
+          <FontAwesomeIcon
+            icon={faLayerGroup}
+            size={responsiveFontSize(2.7)}
+            color="#fff"
+          />
+          {showDropdown && (
+            <View style={styles.dropdownContainer}>
+              <FlatList
+                data={mapTypes}
+                renderItem={({ item, index }) => (
+                  <TouchableOpacity
+                    style={styles.dropdownItem}
+                    onPress={() => selectMapType(index)}
+                  >
+                    <Text style={{ color: "#fff" }}>{item.name}</Text>
+                  </TouchableOpacity>
+                )}
+                keyExtractor={(item) => item.value}
+              />
+            </View>
+          )}
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.button2}
+          onPress={focusOnCurrentLocation}
+        >
+          <FontAwesomeIcon
+            icon={faLocationCrosshairs}
+            size={responsiveFontSize(2.7)}
+            color="#fff"
+          />
+        </TouchableOpacity>
+
+        <SelectionModal
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          options={options}
+        />
+
+        <ProfileModel
+          profileModalVisible={profileModalVisible}
+          setProfileModalVisible={setProfileModalVisible}
+        />
+
+        <View style={styles.buttonContainer}>
+          <View style={styles.buttonWrapper}>
+            <Button
+              buttonColor="#007BFF"
+              icon="walk"
+              mode="contained"
+              onPress={startMeasure}
+              style={styles.button}
+            >
+              Start Measure
+            </Button>
+          </View>
+          <View style={styles.buttonWrapper}>
+            <Button
+              buttonColor="#007BFF"
+              icon="content-save-all"
+              mode="contained"
+              onPress={handleTemplatePress}
+              style={styles.button}
+            >
+              Templates
+            </Button>
+          </View>
+        </View>
+      </View>
     </TouchableWithoutFeedback>
   );
 }
@@ -421,14 +418,14 @@ const styles = StyleSheet.create({
     paddingLeft: 40,
     height: responsiveHeight(6),
     width: "80%",
-    backgroundColor: "rgba(255, 255, 255, 0.6)",
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
     color: "#000",
     borderWidth: 1,
     borderColor: "#CED0D4",
   },
   searchbarInputFocused: {
-    backgroundColor: "#fff",
-    borderColor: "#007BFF", // Change border color when focused
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    borderColor: "#007BFF", 
   },
   map: {
     width: "100%",

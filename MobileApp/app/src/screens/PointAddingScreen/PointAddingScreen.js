@@ -1,25 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { Polygon } from 'react-native-maps';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import { View, Text, FlatList, TouchableOpacity, Modal } from 'react-native';
-import { TextInput, Alert } from 'react-native';
-import { Appbar } from 'react-native-paper';
-import { Polyline } from 'react-native-maps';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { polygon, area, length } from '@turf/turf';
+import React, { useEffect, useState } from "react";
+import { Polygon } from "react-native-maps";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { View, Text, FlatList, TouchableOpacity, Modal } from "react-native";
+import { TextInput, Alert } from "react-native";
+import { Appbar } from "react-native-paper";
+import { Polyline } from "react-native-maps";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import { polygon, area, length } from "@turf/turf";
 import {
   faLayerGroup,
   faLocationCrosshairs,
-} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { styles } from './PointAddingScreenStyles';
-import MapView, { MAP_TYPES } from 'react-native-maps';
-import { Marker } from 'react-native-maps';
-import * as Location from 'expo-location';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import axios from 'axios';
-import AxiosInstance from '../../AxiosInstance';
-import { RFValue } from 'react-native-responsive-fontsize';
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { styles } from "./PointAddingScreenStyles";
+import MapView, { MAP_TYPES } from "react-native-maps";
+import { Marker } from "react-native-maps";
+import * as Location from "expo-location";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import axios from "axios";
+import AxiosInstance from "../../AxiosInstance";
+import { RFValue } from "react-native-responsive-fontsize";
 
 const PointAddingScreen = ({ navigation, route }) => {
   const [showUserLocation, setShowUserLocation] = useState(false);
@@ -29,13 +29,13 @@ const PointAddingScreen = ({ navigation, route }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [points, setPoints] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [mapTypeIndex, setMapTypeIndex] = useState(0);
+  const [mapTypeIndex, setMapTypeIndex] = useState(2);
   const [showCurrentLocation, setShowCurrentLocation] = useState(false);
   const [currentLocation, setCurrentLocation] = useState(null);
   const [searchedLocation, setSearchedLocation] = useState(null);
   const mapRef = React.useRef(null);
   const [isButtonPressed, setIsButtonPressed] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [isFocused, setIsFocused] = useState(false);
 
   /* the closeModal function is used to close the modal */
@@ -68,8 +68,8 @@ const PointAddingScreen = ({ navigation, route }) => {
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        console.error('Permission to access location was denied');
+      if (status !== "granted") {
+        console.error("Permission to access location was denied");
         return;
       }
       let location = await Location.getCurrentPositionAsync({
@@ -96,7 +96,10 @@ const PointAddingScreen = ({ navigation, route }) => {
     if (points.length > 2) {
       setIsPolygonComplete(true);
     } else {
-      alert('You need at least 3 points to complete a polygon');
+      Alert.alert(
+        "Insufficient number of points",
+        "You need at least 3 points to complete a polygon"
+      );
     }
   };
   /* the handleUndoLastPoint function is used to undo the last point */
@@ -108,7 +111,10 @@ const PointAddingScreen = ({ navigation, route }) => {
   /* the handleSaveMap function is used to save the map */
   const handleSaveMap = async () => {
     if (points.length < 3) {
-      alert('You need at least 3 points to calculate area and perimeter');
+      Alert.alert(
+        "Insufficient number of points",
+        "You need at least 3 points to calculate area and perimeter"
+      );
       return;
     }
     /* the formattedPoints is used to store the formatted points */
@@ -121,31 +127,31 @@ const PointAddingScreen = ({ navigation, route }) => {
     /* the poly is used to store the polygon */
     const poly = polygon([formattedPoints]);
     const areaMeters = area(poly);
-    const perimeterMeters = length(poly, { units: 'meters' });
+    const perimeterMeters = length(poly, { units: "meters" });
     const areaPerches = areaMeters / 25.29285264;
     const perimeterKilometers = perimeterMeters / 1000;
 
     Alert.alert(
-      'Confirmation',
+      "Confirmation",
       `Area: ${areaPerches.toFixed(2)} perches, Perimeter: ${perimeterKilometers.toFixed(2)} kilometers`,
       [
         {
-          text: 'Cancel',
+          text: "Cancel",
           onPress: () => setPoints([]), // Clear the points when Cancel is pressed
-          style: 'cancel',
+          style: "cancel",
         },
         {
-          text: 'OK',
+          text: "OK",
           onPress: () => {
             /* the axios request is used to save the template */
-            AxiosInstance.post('/api/auth/mapTemplate/saveTemplate', {
+            AxiosInstance.post("/api/auth/mapTemplate/saveTemplate", {
               locationPoints: points,
               area: areaPerches,
               perimeter: perimeterKilometers,
             })
               .then((response) => {
                 console.log(response.data);
-                navigation.navigate('SaveScreen', {
+                navigation.navigate("SaveScreen", {
                   id: response.data._id,
                   area: areaPerches,
                   perimeter: perimeterKilometers,
@@ -170,13 +176,31 @@ const PointAddingScreen = ({ navigation, route }) => {
 
   /* the handleCancel function is used to navigate to the home screen */
   const handleCancel = () => {
-    navigation.navigate('Home');
+    if (points.length > 2) {
+      Alert.alert(
+        "Are you sure you want to exit?",
+        "Pointed measured will be lost.",
+        [
+          {
+            text: "Cancel",
+            style: "cancel",
+          },
+          { text: "OK",
+            onPress: () => {
+              navigation.navigate("Home");
+            }
+           }
+        ],
+      );
+    } else {
+      navigation.navigate("Home");
+    }
   };
   const mapTypes = [
-    { name: 'Satellite', value: 'satellite' },
-    { name: 'Standard', value: 'standard' },
-    { name: 'Hybrid', value: 'hybrid' },
-    { name: 'Terrain', value: 'terrain' },
+    { name: "Satellite", value: "satellite" },
+    { name: "Standard", value: "standard" },
+    { name: "Hybrid", value: "hybrid" },
+    { name: "Terrain", value: "terrain" },
   ];
 
   /* the toggleMapType function is used to toggle the map type */
@@ -213,28 +237,28 @@ const PointAddingScreen = ({ navigation, route }) => {
             });
           }
         } else {
-          console.error('Location not found');
+          console.error("Location not found");
         }
       } catch (error) {
-        console.error('Error searching for location:', error);
+        console.error("Error searching for location:", error);
       }
     }
   };
 
   /* the clearSearchQuery function is used to clear the search query */
   const clearSearchQuery = () => {
-    setSearchQuery('');
+    setSearchQuery("");
   };
 
   return (
     <>
       <View style={styles.searchbar}>
         <View style={styles.locationIconContainer}>
-          <MaterialIcons name='location-on' size={24} color='#007BFF' />
+          <MaterialIcons name="add-location" size={24} color="#007BFF" />
         </View>
         <TextInput
-          placeholder='Search Location'
-          placeholderTextColor='rgba(0, 0, 0, 0.5)'
+          placeholder="Search Location"
+          placeholderTextColor="rgba(0, 0, 0, 0.5)"
           onFocus={onFocus}
           onBlur={onBlur}
           style={[
@@ -245,12 +269,12 @@ const PointAddingScreen = ({ navigation, route }) => {
           value={searchQuery}
           onSubmitEditing={searchLocation}
         />
-        {searchQuery !== '' && (
+        {searchQuery !== "" && (
           <TouchableOpacity
             onPress={clearSearchQuery}
             style={styles.clearIconContainer}
           >
-            <MaterialIcons name='cancel' size={24} color='#707070' />
+            <MaterialIcons name="cancel" size={24} color="#707070" />
           </TouchableOpacity>
         )}
         <View style={{ marginLeft: 10 }}>
@@ -258,7 +282,7 @@ const PointAddingScreen = ({ navigation, route }) => {
         </View>
       </View>
       <Modal
-        animationType='slide'
+        animationType="slide"
         transparent={true}
         visible={modalVisible}
         onRequestClose={closeModal}
@@ -266,9 +290,9 @@ const PointAddingScreen = ({ navigation, route }) => {
         <View
           style={{
             flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
           }}
         >
           <View style={styles.centeredView}>
@@ -326,15 +350,15 @@ const PointAddingScreen = ({ navigation, route }) => {
             {!isPolygonComplete && points.length > 1 && (
               <Polyline
                 coordinates={points}
-                strokeColor='#000'
+                strokeColor="#CED0D4"
                 strokeWidth={1}
               />
             )}
             {isPolygonComplete && points.length > 2 && (
               <Polygon
                 coordinates={points}
-                strokeColor='#000'
-                fillColor='rgba(199, 192, 192, 0.5)'
+                strokeColor="#CED0D4"
+                fillColor="rgba(199, 192, 192, 0.5)"
                 strokeWidth={1}
               />
             )}
@@ -347,7 +371,7 @@ const PointAddingScreen = ({ navigation, route }) => {
               toggleMapType();
             }}
           >
-            <FontAwesomeIcon icon={faLayerGroup} size={25} color='#fff' />
+            <FontAwesomeIcon icon={faLayerGroup} size={25} color="#fff" />
             {showDropdown && (
               <View style={styles.dropdownContainer}>
                 <FlatList
@@ -357,7 +381,7 @@ const PointAddingScreen = ({ navigation, route }) => {
                       style={styles.dropdownItem}
                       onPress={() => selectMapType(index)}
                     >
-                      <Text style={{ color: '#fff' }}>{item.name}</Text>
+                      <Text style={{ color: "#fff" }}>{item.name}</Text>
                     </TouchableOpacity>
                   )}
                   keyExtractor={(item) => item.value}
@@ -372,7 +396,7 @@ const PointAddingScreen = ({ navigation, route }) => {
             <FontAwesomeIcon
               icon={faLocationCrosshairs}
               size={25}
-              color='#fff'
+              color="#fff"
             />
           </TouchableOpacity>
           <View>
@@ -382,9 +406,9 @@ const PointAddingScreen = ({ navigation, route }) => {
                 onPressOut={() => setIsButtonPressed(false)}
               >
                 <MaterialCommunityIcons
-                  name='arrow-u-left-top'
+                  name="arrow-u-left-top"
                   size={24}
-                  color='white'
+                  color="white"
                   style={styles.sideIconStyle}
                   onPress={handleUndoLastPoint}
                 />
@@ -394,9 +418,9 @@ const PointAddingScreen = ({ navigation, route }) => {
                 onPressOut={() => setIsButtonPressed(false)}
               >
                 <MaterialCommunityIcons
-                  name='shape-polygon-plus'
+                  name="shape-polygon-plus"
                   size={24}
-                  color='white'
+                  color="white"
                   style={styles.sideIconStyle}
                   onPress={handleCompleteMap}
                 />
