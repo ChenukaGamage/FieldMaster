@@ -226,9 +226,10 @@ const PointAddingScreen = ({ navigation, route }) => {
     if (searchQuery) {
       try {
         const response = await fetch(
-          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+          `https://maps.googleapis.com/maps/api/elevation/json?address=${encodeURIComponent(
             searchQuery
-          )}&key=AIzaSyB61t78UY4piRjSDjihdHxlF2oqtrtzw8U`
+          )}&key=AIzaSyA-HTauLo-N85TMtZkl3IAfGwsvJv2cIeI`
+          // API Key Changed
         );
         const data = await response.json();
         if (data.results && data.results.length > 0) {
@@ -239,8 +240,8 @@ const PointAddingScreen = ({ navigation, route }) => {
             mapRef.current.animateToRegion({
               latitude: lat,
               longitude: lng,
-              latitudeDelta: 0.05,
-              longitudeDelta: 0.05,
+              latitudeDelta: 0.005,
+              longitudeDelta: 0.005,
             });
           }
         } else {
