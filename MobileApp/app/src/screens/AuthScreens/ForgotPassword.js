@@ -42,10 +42,9 @@ export default function ForgotPassword() {
         if (err.response.status === 400) {
           Alert.alert("Error", err.response.data.error);
           return;
-        }else{
+        } else {
           Alert.alert("Error", "An error occurred while sending OTP");
         }
-      
       });
   };
 
@@ -74,7 +73,7 @@ export default function ForgotPassword() {
 
           <View style={styles.field}>
             <TextInput
-              label="email"
+              label="Email"
               mode="outlined"
               outlineColor="#d9d7d2"
               activeOutlineColor="#007BFF"

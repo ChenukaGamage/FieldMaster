@@ -263,6 +263,10 @@ export const styles = StyleSheet.create({
     transform: [{ translateY: -12 }],
     zIndex: 1,
   },
+  pinIcon: {
+    height: 35,
+    width: 35,
+  },
   layerIconContainer: {
     position: "absolute",
     backgroundColor: "rgba(0,0,0, 0.7)",
@@ -300,7 +304,7 @@ export const styles = StyleSheet.create({
     paddingLeft: 40,
     height: 50,
     width: "80%",
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    backgroundColor: "rgba(255, 255, 255, 0.6)",
     color: "#000",
     borderWidth: 1,
     borderColor: "#CED0D4",

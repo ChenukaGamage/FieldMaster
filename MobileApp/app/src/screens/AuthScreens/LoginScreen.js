@@ -85,7 +85,7 @@ export default function LoginScreen() {
         <View style={styles.field}>
           <View style={{ marginBottom: responsiveHeight(2) }}>
             <TextInput
-              label="email"
+              label="Email"
               mode="outlined"
               outlineColor="#d9d7d2"
               activeOutlineColor="#007BFF"
@@ -102,7 +102,7 @@ export default function LoginScreen() {
 
           <View>
             <TextInput
-              label="password"
+              label="Password"
               mode="outlined"
               outlineColor="#d9d7d2"
               theme={{ roundness: 10 }}
@@ -115,6 +115,7 @@ export default function LoginScreen() {
               secureTextEntry
               value={password}
               onChangeText={(text) => setPassword(text)}
+              onSubmitEditing={handleLogin}
             />
           </View>
 

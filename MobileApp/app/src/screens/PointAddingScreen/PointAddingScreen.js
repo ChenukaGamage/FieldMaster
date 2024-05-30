@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Image } from "react-native";
 import { Polygon } from "react-native-maps";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { View, Text, FlatList, TouchableOpacity, Modal } from "react-native";
@@ -190,12 +191,13 @@ const PointAddingScreen = ({ navigation, route }) => {
             text: "Cancel",
             style: "cancel",
           },
-          { text: "OK",
+          {
+            text: "OK",
             onPress: () => {
               navigation.navigate("Home");
-            }
-           }
-        ],
+            },
+          },
+        ]
       );
     } else {
       navigation.navigate("Home");
@@ -350,21 +352,23 @@ const PointAddingScreen = ({ navigation, route }) => {
             mapPadding={{ top: 0, right: -100, bottom: 0, left: 0 }}
           >
             {points.map((point, index) => (
-              <Marker key={index} coordinate={point} />
+              <Marker key={index} coordinate={point}>
+                <MaterialCommunityIcons name="pin" size={30} color="rgba(255, 0, 0, 1.0)" />
+              </Marker>
             ))}
             {!isPolygonComplete && points.length > 1 && (
               <Polyline
                 coordinates={points}
                 strokeColor="#CED0D4"
-                strokeWidth={1}
+                strokeWidth={2}
               />
             )}
             {isPolygonComplete && points.length > 2 && (
               <Polygon
                 coordinates={points}
                 strokeColor="#CED0D4"
-                fillColor="rgba(199, 192, 192, 0.5)"
-                strokeWidth={1}
+                fillColor="rgba(1, 3, 4, 0.4)"
+                strokeWidth={2}
               />
             )}
           </MapView>
