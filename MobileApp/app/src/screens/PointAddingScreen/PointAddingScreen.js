@@ -127,8 +127,15 @@ const PointAddingScreen = ({ navigation, route }) => {
     const formattedPoints = points.map((point) => [
       point.longitude,
       point.latitude,
+      point.elevation,
     ]);
     formattedPoints.push(formattedPoints[0]);
+
+    // const coordinatesWithElevation = formattedPoints.map((point) => [
+    //   point.longitude,
+    //   point.latitude,
+    //   point.elevation
+    // ]);
 
     /* the poly is used to store the polygon */
     const poly = polygon([formattedPoints]);
@@ -226,16 +233,22 @@ const PointAddingScreen = ({ navigation, route }) => {
     if (searchQuery) {
       try {
         const response = await fetch(
-          `https://maps.googleapis.com/maps/api/elevation/json?address=${encodeURIComponent(
+          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
             searchQuery
           )}&key=AIzaSyA-HTauLo-N85TMtZkl3IAfGwsvJv2cIeI`
-          // API Key Changed
         );
         const data = await response.json();
         if (data.results && data.results.length > 0) {
           const { lat, lng } = data.results[0].geometry.location;
-          setShowCurrentLocation(false); // Hide current location
-          setSearchedLocation({ latitude: lat, longitude: lng });
+
+          const elevationResponse = await fetch(
+            `https://maps.googleapis.com/maps/api/elevation/json?locations=${lat},${lng}&key=AIzaSyA-HTauLo-N85TMtZkl3IAfGwsvJv2cIeI`
+          );
+          const elevationData = await elevationResponse.json();
+          const elevation = elevationData.results[0].elevation;
+
+          setShowCurrentLocation(false);
+          setSearchedLocation({ latitude: lat, longitude: lng, elevation });
           if (mapRef.current) {
             mapRef.current.animateToRegion({
               latitude: lat,
@@ -285,10 +298,8 @@ const PointAddingScreen = ({ navigation, route }) => {
             <MaterialIcons name="cancel" size={24} color="#707070" />
           </TouchableOpacity>
         )}
-        <View style={{ marginLeft: 10 }}>
-          <TouchableOpacity></TouchableOpacity>
-        </View>
       </View>
+
       <Modal
         animationType="slide"
         transparent={true}
@@ -327,7 +338,7 @@ const PointAddingScreen = ({ navigation, route }) => {
           </View>
         </View>
       </Modal>
-      {/* including map view */}
+
       {region && (
         <View style={{ flex: 1 }}>
           <MapView
@@ -354,7 +365,11 @@ const PointAddingScreen = ({ navigation, route }) => {
           >
             {points.map((point, index) => (
               <Marker key={index} coordinate={point}>
-                <MaterialCommunityIcons name="pin" size={30} color="rgba(255, 0, 0, 1.0)" />
+                <MaterialCommunityIcons
+                  name="pin"
+                  size={30}
+                  color="rgba(255, 0, 0, 1.0)"
+                />
               </Marker>
             ))}
             {!isPolygonComplete && points.length > 1 && (
@@ -370,6 +385,16 @@ const PointAddingScreen = ({ navigation, route }) => {
                 strokeColor="#CED0D4"
                 fillColor="rgba(1, 3, 4, 0.4)"
                 strokeWidth={2}
+              />
+            )}
+            {searchedLocation && (
+              <Marker
+                coordinate={{
+                  latitude: searchedLocation.latitude,
+                  longitude: searchedLocation.longitude,
+                }}
+                title="Searched Location"
+                description={`Elevation: ${searchedLocation.elevation.toFixed(2)} meters`}
               />
             )}
           </MapView>
