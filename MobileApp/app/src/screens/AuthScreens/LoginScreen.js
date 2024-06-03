@@ -44,12 +44,12 @@ export default function LoginScreen() {
         Alert.alert("Error", data.error || "Something went wrong");
       });
   };
-//navigate to the ForgotPassword screen
+  //navigate to the ForgotPassword screen
   const handleForgotPassword = () => {
     console.log("Forgot Password");
     navigation.navigate("Forgot");
   };
-//navigate to the Register screen
+  //navigate to the Register screen
   const handleSignUp = () => {
     navigation.navigate("Register");
   };
@@ -69,13 +69,13 @@ export default function LoginScreen() {
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <View style={styles.container}>
-          <StatusBar barStyle="light-content" backgroundColor="#007BFF" />
-          <Appbar.Header style={styles.header}>
-            <Appbar.BackAction
-              onPress={() => navigation.goBack()}
-              color="white"
-            />
-          </Appbar.Header>
+        <StatusBar barStyle="light-content" backgroundColor="#007BFF" />
+        <Appbar.Header style={styles.header}>
+          <Appbar.BackAction
+            onPress={() => navigation.goBack()}
+            color="white"
+          />
+        </Appbar.Header>
 
         <View style={styles.textSection}>
           <Text style={styles.welcomeText}>Welcome </Text>
@@ -85,7 +85,7 @@ export default function LoginScreen() {
         <View style={styles.field}>
           <View style={{ marginBottom: responsiveHeight(2) }}>
             <TextInput
-              label="email"
+              label="Email"
               mode="outlined"
               outlineColor="#d9d7d2"
               activeOutlineColor="#007BFF"
@@ -102,7 +102,7 @@ export default function LoginScreen() {
 
           <View>
             <TextInput
-              label="password"
+              label="Password"
               mode="outlined"
               outlineColor="#d9d7d2"
               theme={{ roundness: 10 }}
