@@ -231,10 +231,20 @@ const PointAddingScreen = ({ navigation, route }) => {
           )}&key=AIzaSyB61t78UY4piRjSDjihdHxlF2oqtrtzw8U`
         );
         const data = await response.json();
+  
         if (data.results && data.results.length > 0) {
           const { lat, lng } = data.results[0].geometry.location;
+  
+          // Get elevation data
+          const elevationResponse = await fetch(
+            `https://maps.googleapis.com/maps/api/elevation/json?locations=${lat},${lng}&key=AIzaSyAvDuUmTTwxFnWEE5XGXxjbGVR0DGGIxkU`
+          );
+          const elevationData = await elevationResponse.json();
+          const elevation = elevationData.results[0].elevation;
+  
           setShowCurrentLocation(false); // Hide current location
-          setSearchedLocation({ latitude: lat, longitude: lng });
+          setSearchedLocation({ latitude: lat, longitude: lng, elevation });
+  
           if (mapRef.current) {
             mapRef.current.animateToRegion({
               latitude: lat,
@@ -242,6 +252,7 @@ const PointAddingScreen = ({ navigation, route }) => {
               latitudeDelta: 0.05,
               longitudeDelta: 0.05,
             });
+            // You can optionally use elevation data for map styling here
           }
         } else {
           console.error("Location not found");
@@ -251,6 +262,7 @@ const PointAddingScreen = ({ navigation, route }) => {
       }
     }
   };
+  
 
   /* the clearSearchQuery function is used to clear the search query */
   const clearSearchQuery = () => {
