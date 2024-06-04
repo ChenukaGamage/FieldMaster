@@ -114,6 +114,39 @@ const PointAddingScreen = ({ navigation, route }) => {
       setPoints(points.slice(0, -1));
     }
   };
+
+  /* Function used to get the elevation based on points provided*/
+  async function getElevation(latitude, longitude) {
+    try {
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/elevation/json?locations=${latitude},${longitude}&key=AIzaSyAvDuUmTTwxFnWEE5XGXxjbGVR0DGGIxkU`
+      );
+
+      const data = await response.json();
+
+      if (data.results && data.results.length > 0) {
+        const elevation = data.results[0].elevation;
+        return elevation;
+      } else {
+        console.error("Elevation data not found");
+        return null;
+      }
+    } catch (error) {
+      console.error("Error fetching elevation:", error);
+      return null;
+    }
+  }
+
+  async function handleElevation(latitude, longitude) {
+    const elevation = await getElevation(latitude, longitude);
+
+    if (elevation !== null) {
+      // console.log("Using Google API ::  Elevation:", elevation, "meters");
+      return elevation;
+    } else {
+      console.log("Failed to get elevation.");
+    }
+  }
   /* the handleSaveMap function is used to save the map */
   const handleSaveMap = async () => {
     if (points.length < 3) {
@@ -127,6 +160,7 @@ const PointAddingScreen = ({ navigation, route }) => {
     const formattedPoints = points.map((point) => [
       point.longitude,
       point.latitude,
+      point.elevation,
     ]);
     formattedPoints.push(formattedPoints[0]);
 
@@ -228,23 +262,13 @@ const PointAddingScreen = ({ navigation, route }) => {
         const response = await fetch(
           `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
             searchQuery
-          )}&key=AIzaSyB61t78UY4piRjSDjihdHxlF2oqtrtzw8U`
+          )}&key=AIzaSyAvDuUmTTwxFnWEE5XGXxjbGVR0DGGIxkU`
         );
         const data = await response.json();
-  
         if (data.results && data.results.length > 0) {
           const { lat, lng } = data.results[0].geometry.location;
-  
-          // Get elevation data
-          const elevationResponse = await fetch(
-            `https://maps.googleapis.com/maps/api/elevation/json?locations=${lat},${lng}&key=AIzaSyAvDuUmTTwxFnWEE5XGXxjbGVR0DGGIxkU`
-          );
-          const elevationData = await elevationResponse.json();
-          const elevation = elevationData.results[0].elevation;
-  
           setShowCurrentLocation(false); // Hide current location
-          setSearchedLocation({ latitude: lat, longitude: lng, elevation });
-  
+          setSearchedLocation({ latitude: lat, longitude: lng });
           if (mapRef.current) {
             mapRef.current.animateToRegion({
               latitude: lat,
@@ -252,7 +276,6 @@ const PointAddingScreen = ({ navigation, route }) => {
               latitudeDelta: 0.05,
               longitudeDelta: 0.05,
             });
-            // You can optionally use elevation data for map styling here
           }
         } else {
           console.error("Location not found");
@@ -262,7 +285,6 @@ const PointAddingScreen = ({ navigation, route }) => {
       }
     }
   };
-  
 
   /* the clearSearchQuery function is used to clear the search query */
   const clearSearchQuery = () => {
@@ -357,6 +379,14 @@ const PointAddingScreen = ({ navigation, route }) => {
             }}
             mapType={mapTypes[mapTypeIndex].value}
             onPress={(event) => {
+              // if (!isButtonPressed) {
+              //   const point = event.nativeEvent.coordinate;
+              //   const elevation = handleElevation(
+              //     point.latitude,
+              //     point.longitude
+              //   );
+              //   setPoints([...points, point, elevation]);
+              // }
               if (!isButtonPressed) {
                 setPoints([...points, event.nativeEvent.coordinate]);
               }
@@ -365,7 +395,11 @@ const PointAddingScreen = ({ navigation, route }) => {
           >
             {points.map((point, index) => (
               <Marker key={index} coordinate={point}>
-                <MaterialCommunityIcons name="pin" size={30} color="rgba(255, 0, 0, 1.0)" />
+                <MaterialCommunityIcons
+                  name="pin"
+                  size={30}
+                  color="rgba(255, 0, 0, 1.0)"
+                />
               </Marker>
             ))}
             {!isPolygonComplete && points.length > 1 && (
