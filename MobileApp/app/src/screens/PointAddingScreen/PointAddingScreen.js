@@ -37,7 +37,7 @@ const PointAddingScreen = ({ navigation, route }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [mapTypeIndex, setMapTypeIndex] = useState(2);
   const [showCurrentLocation, setShowCurrentLocation] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState(null);
+  const [currentLocation, setCurrentLocation] = useState(0);
   const [searchedLocation, setSearchedLocation] = useState(null);
   const mapRef = React.useRef(null);
   const [isButtonPressed, setIsButtonPressed] = useState(false);
@@ -139,7 +139,6 @@ const PointAddingScreen = ({ navigation, route }) => {
 
   async function handleElevation(latitude, longitude) {
     const elevation = await getElevation(latitude, longitude);
-
     if (elevation !== null) {
       // console.log("Using Google API ::  Elevation:", elevation, "meters");
       return elevation;
@@ -147,6 +146,7 @@ const PointAddingScreen = ({ navigation, route }) => {
       console.log("Failed to get elevation.");
     }
   }
+
   /* the handleSaveMap function is used to save the map */
   const handleSaveMap = async () => {
     if (points.length < 3) {
@@ -380,12 +380,12 @@ const PointAddingScreen = ({ navigation, route }) => {
             mapType={mapTypes[mapTypeIndex].value}
             onPress={(event) => {
               // if (!isButtonPressed) {
-              //   const point = event.nativeEvent.coordinate;
+              //   const coord = event.nativeEvent.coordinate;
               //   const elevation = handleElevation(
-              //     point.latitude,
-              //     point.longitude
+              //     coord.latitude,
+              //     coord.longitude
               //   );
-              //   setPoints([...points, point, elevation]);
+              //   setPoints([...points, coord, elevation]);
               // }
               if (!isButtonPressed) {
                 setPoints([...points, event.nativeEvent.coordinate]);
