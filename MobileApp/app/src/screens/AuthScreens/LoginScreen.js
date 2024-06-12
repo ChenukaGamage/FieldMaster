@@ -30,19 +30,18 @@ export default function LoginScreen() {
       Alert.alert("Please fill in all fields");
       return;
     }
-    AxiosInstance.post("/api/users/login", { email, password })
-      .then(async (response) => {
-        if (response.status === 200) {
-          const token = response.data.token;
-          await AsyncStorage.setItem("token", token);
-          navigation.navigate("Home", { email: email });
-          Alert.alert("Success", "Login successfully");
-        }
-      })
-      .catch((err) => {
-        const data = err.response.data;
-        Alert.alert("Error", data.error || "Something went wrong");
-      });
+    try {
+      const response = await AxiosInstance.post("/api/users/login", { email, password });
+      if (response.status === 200) {
+        const token = response.data.token;
+        await AsyncStorage.setItem("token", token);
+        navigation.navigate("Home", { email: email });
+        Alert.alert("Success", "Login successfully");
+      }
+    } catch (err) {
+      const errorMessage = err.response?.data?.error || "Something went wrong";
+      Alert.alert("Error", errorMessage);
+    }
   };
   //navigate to the ForgotPassword screen
   const handleForgotPassword = () => {
@@ -142,7 +141,7 @@ export default function LoginScreen() {
 
 const styles = StyleSheet.create({
   header: {
-    height: 50,
+    height: responsiveHeight(6.5),
     backgroundColor: "#007BFF",
 
     ...Platform.select({
