@@ -1,3 +1,3 @@
-const ipAddress = '192.168.1.104';
-const backendUrl = `http://${ipAddress}:3000`;
+const ipAddress = 'fieldmaster.kosmoz.io';
+const backendUrl = `https://${ipAddress}`;
 export default backendUrl;

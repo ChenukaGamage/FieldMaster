@@ -115,7 +115,7 @@ export default function Fence({ onBackToSidebar }) {
 
       // Make POST request to the backend
       const response = await axios.post(
-        "http://192.168.52.237:3000/api/fence/fence",
+        "https://fieldmaster.kosmoz.io/api/fence/fence",
         requestData
       );
 
