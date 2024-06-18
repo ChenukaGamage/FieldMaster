@@ -3,7 +3,6 @@ import { Polygon } from "react-native-maps";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { View, Text, FlatList, TouchableOpacity, Modal } from "react-native";
 import { TextInput, Alert } from "react-native";
-import { Appbar } from "react-native-paper";
 import { Polyline } from "react-native-maps";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { polygon, area, length } from "@turf/turf";
@@ -17,15 +16,12 @@ import MapView, { MAP_TYPES } from "react-native-maps";
 import { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import axios from "axios";
-import AxiosInstance from "../../AxiosInstance";
-import { RFValue } from "react-native-responsive-fontsize";
+import { responsiveFontSize } from "react-native-responsive-dimensions";
 
 const PointAddingScreen = ({ navigation, route }) => {
   const [showUserLocation, setShowUserLocation] = useState(false);
   const [isPolygonComplete, setIsPolygonComplete] = useState(false);
   const [region, setRegion] = useState(null);
-  const [locationPoints, setLocationPoints] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [points, setPoints] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -215,7 +211,11 @@ const PointAddingScreen = ({ navigation, route }) => {
     <>
       <View style={styles.searchbar}>
         <View style={styles.locationIconContainer}>
-          <MaterialIcons name="location-on" size={24} color="#007BFF" />
+          <MaterialIcons
+            name="location-on"
+            size={responsiveFontSize(2.5)}
+            color="#007BFF"
+          />
         </View>
         <TextInput
           placeholder="Search Location"
@@ -235,12 +235,13 @@ const PointAddingScreen = ({ navigation, route }) => {
             onPress={clearSearchQuery}
             style={styles.clearIconContainer}
           >
-            <MaterialIcons name="cancel" size={24} color="#707070" />
+            <MaterialIcons
+              name="cancel"
+              size={responsiveFontSize(2.5)}
+              color="#707070"
+            />
           </TouchableOpacity>
         )}
-        <View style={{ marginLeft: 10 }}>
-          <TouchableOpacity></TouchableOpacity>
-        </View>
       </View>
       <Modal
         animationType="slide"
@@ -285,7 +286,7 @@ const PointAddingScreen = ({ navigation, route }) => {
         <View style={{ flex: 1 }}>
           <MapView
             ref={mapRef}
-            style={{ flex: 1, paddingTop: 100 }}
+            style={styles.mapViewStyling}
             region={region}
             showsUserLocation={showUserLocation}
             onUserLocationChange={(event) => {
@@ -332,7 +333,11 @@ const PointAddingScreen = ({ navigation, route }) => {
               toggleMapType();
             }}
           >
-            <FontAwesomeIcon icon={faLayerGroup} size={25} color="#fff" />
+            <FontAwesomeIcon
+              icon={faLayerGroup}
+              size={responsiveFontSize(3)}
+              color="#fff"
+            />
             {showDropdown && (
               <View style={styles.dropdownContainer}>
                 <FlatList
@@ -356,7 +361,7 @@ const PointAddingScreen = ({ navigation, route }) => {
           >
             <FontAwesomeIcon
               icon={faLocationCrosshairs}
-              size={25}
+              size={responsiveFontSize(3)}
               color="#fff"
             />
           </TouchableOpacity>
@@ -368,7 +373,7 @@ const PointAddingScreen = ({ navigation, route }) => {
               >
                 <MaterialCommunityIcons
                   name="arrow-u-left-top"
-                  size={24}
+                  size={responsiveFontSize(3)}
                   color="white"
                   style={styles.sideIconStyle}
                   onPress={handleUndoLastPoint}
@@ -380,7 +385,7 @@ const PointAddingScreen = ({ navigation, route }) => {
               >
                 <MaterialCommunityIcons
                   name="shape-polygon-plus"
-                  size={24}
+                  size={responsiveFontSize(3)}
                   color="white"
                   style={styles.sideIconStyle}
                   onPress={handleCompleteMap}
@@ -389,14 +394,14 @@ const PointAddingScreen = ({ navigation, route }) => {
             </View>
           </View>
           <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={handleSaveMap} style={styles.btnStyle}>
-              <Text style={styles.btmBtnStyle}>Save</Text>
-            </TouchableOpacity>
             <TouchableOpacity
               onPress={handleCancel}
               style={styles.cancelBtnStyle}
             >
               <Text style={styles.btmBtnStyle}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleSaveMap} style={styles.btnStyle}>
+              <Text style={styles.btmBtnStyle}>Save</Text>
             </TouchableOpacity>
           </View>
         </View>
