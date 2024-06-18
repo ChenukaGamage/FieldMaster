@@ -75,8 +75,6 @@ const PointAddingScreen = ({ navigation, route }) => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         console.error("Permission to access location was denied");
-      if (status !== "granted") {
-        console.error("Permission to access location was denied");
         return;
       }
       let location = await Location.getCurrentPositionAsync({
@@ -302,8 +300,6 @@ const PointAddingScreen = ({ navigation, route }) => {
           />
         </View>
         <TextInput
-          placeholder="Search Location"
-          placeholderTextColor="rgba(0, 0, 0, 0.5)"
           placeholder="Search Location"
           placeholderTextColor="rgba(0, 0, 0, 0.5)"
           onFocus={onFocus}
