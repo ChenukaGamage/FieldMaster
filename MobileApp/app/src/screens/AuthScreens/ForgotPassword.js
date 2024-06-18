@@ -103,7 +103,7 @@ export default function ForgotPassword() {
 
 const styles = StyleSheet.create({
   header: {
-    height: 50,
+    height: responsiveHeight(6.5),
     backgroundColor: "#007BFF",
 
     ...Platform.select({

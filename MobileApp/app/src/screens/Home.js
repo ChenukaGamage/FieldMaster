@@ -8,7 +8,6 @@ import {
   TextInput,
   FlatList,
   TouchableWithoutFeedback,
-  KeyboardAvoidingView,
   Keyboard,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -29,10 +28,8 @@ import {
 import SelectionModal from "../components/SelectionModal";
 import ProfileModel from "../components/ProfileModel";
 import axios from "axios";
-import Config from "react-native-config";
 import ProfileAvatar from "../components/ProfileAvatar";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused } from '@react-navigation/native';
 import AxiosInstance from "../AxiosInstance";
 
 const apiKey = "AIzaSyB61t78UY4piRjSDjihdHxlF2oqtrtzw8U";

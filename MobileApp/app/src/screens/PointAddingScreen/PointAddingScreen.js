@@ -31,7 +31,6 @@ const PointAddingScreen = ({ navigation, route }) => {
   const [showUserLocation, setShowUserLocation] = useState(false);
   const [isPolygonComplete, setIsPolygonComplete] = useState(false);
   const [region, setRegion] = useState(null);
-  const [locationPoints, setLocationPoints] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [points, setPoints] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -74,6 +73,8 @@ const PointAddingScreen = ({ navigation, route }) => {
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        console.error("Permission to access location was denied");
       if (status !== "granted") {
         console.error("Permission to access location was denied");
         return;
@@ -156,7 +157,6 @@ const PointAddingScreen = ({ navigation, route }) => {
       );
       return;
     }
-    /* the formattedPoints is used to store the formatted points */
     const formattedPoints = points.map((point) => [
       point.longitude,
       point.latitude,
@@ -164,7 +164,6 @@ const PointAddingScreen = ({ navigation, route }) => {
     ]);
     formattedPoints.push(formattedPoints[0]);
 
-    /* the poly is used to store the polygon */
     const poly = polygon([formattedPoints]);
     const areaMeters = area(poly);
     const perimeterMeters = length(poly, { units: "meters" });
@@ -173,25 +172,26 @@ const PointAddingScreen = ({ navigation, route }) => {
 
     Alert.alert(
       "Confirmation",
+      "Confirmation",
       `Area: ${areaPerches.toFixed(2)} perches, Perimeter: ${perimeterKilometers.toFixed(2)} kilometers`,
       [
         {
           text: "Cancel",
-          onPress: () => setPoints([]), // Clear the points when Cancel is pressed
+          onPress: () => setPoints([]),
           style: "cancel",
         },
         {
           text: "OK",
+          text: "OK",
           onPress: () => {
-            /* the axios request is used to save the template */
-            AxiosInstance.post("/api/auth/mapTemplate/saveTemplate", {
+            navigation.navigate("SaveScreen", {
               locationPoints: points,
               area: areaPerches,
               perimeter: perimeterKilometers,
             })
               .then((response) => {
                 console.log(response.data);
-                navigation.navigate("SaveScreen", {
+                navigation.navigate('SaveScreen', {
                   id: response.data._id,
                   area: areaPerches,
                   perimeter: perimeterKilometers,
@@ -295,9 +295,15 @@ const PointAddingScreen = ({ navigation, route }) => {
     <>
       <View style={styles.searchbar}>
         <View style={styles.locationIconContainer}>
-          <MaterialIcons name="add-location" size={24} color="#007BFF" />
+          <MaterialIcons
+            name="location-on"
+            size={responsiveFontSize(2.5)}
+            color="#007BFF"
+          />
         </View>
         <TextInput
+          placeholder="Search Location"
+          placeholderTextColor="rgba(0, 0, 0, 0.5)"
           placeholder="Search Location"
           placeholderTextColor="rgba(0, 0, 0, 0.5)"
           onFocus={onFocus}
@@ -315,12 +321,9 @@ const PointAddingScreen = ({ navigation, route }) => {
             onPress={clearSearchQuery}
             style={styles.clearIconContainer}
           >
-            <MaterialIcons name="cancel" size={24} color="#707070" />
+            <MaterialIcons name='cancel' size={24} color='#707070' />
           </TouchableOpacity>
         )}
-        <View style={{ marginLeft: 10 }}>
-          <TouchableOpacity></TouchableOpacity>
-        </View>
       </View>
       <Modal
         animationType="slide"
@@ -365,7 +368,7 @@ const PointAddingScreen = ({ navigation, route }) => {
         <View style={{ flex: 1 }}>
           <MapView
             ref={mapRef}
-            style={{ flex: 1, paddingTop: 100 }}
+            style={styles.mapViewStyling}
             region={region}
             showsUserLocation={showUserLocation}
             onUserLocationChange={(event) => {
@@ -426,7 +429,7 @@ const PointAddingScreen = ({ navigation, route }) => {
               toggleMapType();
             }}
           >
-            <FontAwesomeIcon icon={faLayerGroup} size={25} color="#fff" />
+            <FontAwesomeIcon icon={faLayerGroup} size={25} color='#fff' />
             {showDropdown && (
               <View style={styles.dropdownContainer}>
                 <FlatList
@@ -461,9 +464,9 @@ const PointAddingScreen = ({ navigation, route }) => {
                 onPressOut={() => setIsButtonPressed(false)}
               >
                 <MaterialCommunityIcons
-                  name="arrow-u-left-top"
+                  name='arrow-u-left-top'
                   size={24}
-                  color="white"
+                  color='white'
                   style={styles.sideIconStyle}
                   onPress={handleUndoLastPoint}
                 />
@@ -474,7 +477,7 @@ const PointAddingScreen = ({ navigation, route }) => {
               >
                 <MaterialCommunityIcons
                   name="shape-polygon-plus"
-                  size={24}
+                  size={responsiveFontSize(3)}
                   color="white"
                   style={styles.sideIconStyle}
                   onPress={handleCompleteMap}
@@ -483,14 +486,14 @@ const PointAddingScreen = ({ navigation, route }) => {
             </View>
           </View>
           <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={handleSaveMap} style={styles.btnStyle}>
-              <Text style={styles.btmBtnStyle}>Save</Text>
-            </TouchableOpacity>
             <TouchableOpacity
               onPress={handleCancel}
               style={styles.cancelBtnStyle}
             >
               <Text style={styles.btmBtnStyle}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleSaveMap} style={styles.btnStyle}>
+              <Text style={styles.btmBtnStyle}>Save</Text>
             </TouchableOpacity>
           </View>
         </View>

@@ -2,7 +2,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const AxiosInstance = axios.create({
-  baseURL: "https://fieldmaster.kosmoz.io",
+  baseURL: 'https://fieldmaster.kosmoz.io',
   headers: {
     "Content-Type": "application/json",
   },

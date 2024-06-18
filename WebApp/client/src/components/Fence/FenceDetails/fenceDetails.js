@@ -21,7 +21,7 @@ export default function FenceDetails({
   useEffect(() => {
     const fetchData = async () => {
         try {
-            const response = await fetch('http://192.168.52.237:3000/api/fence/numberOfSticks');
+            const response = await fetch('https://fieldmaster.kosmoz.io/api/fence/numberOfSticks');
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
