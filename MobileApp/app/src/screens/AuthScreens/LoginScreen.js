@@ -31,7 +31,10 @@ export default function LoginScreen() {
       return;
     }
     try {
-      const response = await AxiosInstance.post("/api/users/login", { email, password });
+      const response = await AxiosInstance.post("/api/users/login", {
+        email: "chenuka1234@gmail.com",
+        password: "Turbine123!",
+      });
       if (response.status === 200) {
         const token = response.data.token;
         await AsyncStorage.setItem("token", token);

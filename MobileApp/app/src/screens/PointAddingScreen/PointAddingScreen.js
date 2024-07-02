@@ -158,7 +158,6 @@ const PointAddingScreen = ({ navigation, route }) => {
     const formattedPoints = points.map((point) => [
       point.longitude,
       point.latitude,
-      point.elevation,
     ]);
     formattedPoints.push(formattedPoints[0]);
 

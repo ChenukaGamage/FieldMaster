@@ -29,7 +29,7 @@ import SelectionModal from "../components/SelectionModal";
 import ProfileModel from "../components/ProfileModel";
 import axios from "axios";
 import ProfileAvatar from "../components/ProfileAvatar";
-import { useIsFocused } from '@react-navigation/native';
+import { useIsFocused } from "@react-navigation/native";
 import AxiosInstance from "../AxiosInstance";
 
 const apiKey = "AIzaSyB61t78UY4piRjSDjihdHxlF2oqtrtzw8U";
@@ -422,7 +422,7 @@ const styles = StyleSheet.create({
   },
   searchbarInputFocused: {
     backgroundColor: "rgba(255, 255, 255, 0.8)",
-    borderColor: "#007BFF", 
+    borderColor: "#007BFF",
   },
   map: {
     width: "100%",
